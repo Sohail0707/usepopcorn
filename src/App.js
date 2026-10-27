@@ -54,7 +54,7 @@ const average = (arr) =>
 const KEY = "c16acfa4";
 
 export default function App() {
-  const [query, setQuery] = useState("pirates");
+  const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -101,7 +101,7 @@ export default function App() {
           setMovies(data.Search);
           setIsLoading(false);
         } catch (err) {
-          console.error(err.message);
+          console.log(err.message);
 
           if (err.name !== "AbortError") {
             setError(err.message);
@@ -116,7 +116,9 @@ export default function App() {
         return;
       }
 
+      handleCloseMovie();
       fetchMovies();
+
       return function () {
         controller.abort();
       };
@@ -294,6 +296,23 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
 
   useEffect(
     function () {
+      function callback(e) {
+        if (e.code === "Escape") {
+          onCloseMovie();
+        }
+      }
+
+      document.addEventListener("keydown", callback);
+
+      return function () {
+        document.removeEventListener("keydown", callback);
+      };
+    },
+    [onCloseMovie],
+  );
+
+  useEffect(
+    function () {
       if (!title) return;
       document.title = `Movie | ${title}`;
 
@@ -316,7 +335,7 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
           const data = await res.json();
           setMovie(data);
         } catch (err) {
-          console.error(err.message);
+          console.log(err.message);
           setError(err.message);
         } finally {
           setIsLoading(false);
