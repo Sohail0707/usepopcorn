@@ -54,7 +54,7 @@ const average = (arr) =>
 const KEY = "c16acfa4";
 
 export default function App() {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState("pirates");
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -283,6 +283,18 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     onAddWatched(newWatchedMovie);
     onCloseMovie();
   }
+
+  useEffect(
+    function () {
+      if (!title) return;
+      document.title = `Movie | ${title}`;
+
+      return function () {
+        document.title = "usePopcorn";
+      };
+    },
+    [title],
+  );
 
   useEffect(
     function () {
